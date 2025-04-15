@@ -1,0 +1,60 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+
+interface DiaryEntry {
+  id: string;
+  content: string;
+  date: string;
+}
+
+interface DiaryFormProps {
+  diary?: DiaryEntry | null;
+  onClose: () => void;
+  onSave: (diary: DiaryEntry) => void;
+}
+
+export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
+  const [content, setContent] = useState(diary?.content || '');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newDiary: DiaryEntry = {
+      id: diary?.id || Date.now().toString(),
+      content,
+      date: diary?.date || new Date().toLocaleDateString('zh-CN'),
+    };
+    onSave(newDiary);
+    onClose();
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+            写下你的故事
+          </label>
+          <textarea
+            id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={6}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+            placeholder="今天发生了什么有趣的事情..."
+          />
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onClose}>
+            取消
+          </Button>
+          <Button type="submit">
+            保存
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}

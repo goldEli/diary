@@ -41,6 +41,7 @@ export default function Home() {
   };
 
   const handleDeleteDiary = async (id: string) => {
+    if (!window.confirm('确定要删除这篇日记吗？')) return;
     const updatedDiaries = diaries.filter((diary) => diary.id !== id);
     setDiaries(updatedDiaries);
     await saveDiaries(updatedDiaries);

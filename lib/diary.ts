@@ -8,7 +8,8 @@ import { stringify } from "csv-stringify/sync";
 import { CSVParser } from "./CSVParser";
 
 const DATA_DIR = path.join(process.cwd(), "data");
-const CSV_FILE = path.join(DATA_DIR, "diaries.csv");
+const getCurrentYear = () => new Date().getFullYear();
+const CSV_FILE = path.join(DATA_DIR, `diaries_${getCurrentYear()}.csv`);
 
 export const loadDiaries = async (): Promise<DiaryEntry[]> => {
   try {

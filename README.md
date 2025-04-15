@@ -47,10 +47,36 @@ pnpm dev
 pnpm build
 ```
 
-### 启动服务
+### 使用PM2部署
 
+1. 全局安装PM2
 ```bash
-pnpm start
+npm install -g pm2
+```
+
+2. 启动应用
+```bash
+pm2 start ecosystem.config.js
+```
+
+3. 查看应用状态
+```bash
+pm2 status
+```
+
+4. 查看日志
+```bash
+pm2 logs diary
+```
+
+5. 停止应用
+```bash
+pm2 stop diary
+```
+
+6. 重启应用
+```bash
+pm2 restart diary
 ```
 
 ### 数据存储

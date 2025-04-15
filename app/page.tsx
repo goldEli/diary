@@ -1,18 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
 import { DiaryForm } from '@/components/DiaryForm';
 
-interface DiaryEntry {
-  id: string;
-  content: string;
-  date: string;
-}
+import { DiaryEntry } from '@/types/diary';
+import { loadDiaries, saveDiaries } from '@/lib/diary';
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+
+  useEffect(() => {
+    const fetchDiaries = async () => {
+      const loadedDiaries = await loadDiaries();
+      setDiaries(loadedDiaries);
+    };
+    fetchDiaries();
+  }, []);
+
   const [showForm, setShowForm] = useState(false);
   const [currentDiary, setCurrentDiary] = useState<DiaryEntry | null>(null);
 
@@ -26,27 +32,30 @@ export default function Home() {
     setShowForm(true);
   };
 
-  const handleDeleteDiary = (id: string) => {
-    setDiaries(diaries.filter(diary => diary.id !== id));
+  const handleDeleteDiary = async (id: string) => {
+    const updatedDiaries = diaries.filter(diary => diary.id !== id);
+    setDiaries(updatedDiaries);
+    await saveDiaries(updatedDiaries);
   };
 
-  const handleSaveDiary = (diary: DiaryEntry) => {
+  const handleSaveDiary = async (diary: DiaryEntry) => {
+    let updatedDiaries: DiaryEntry[];
     if (currentDiary) {
-      setDiaries(diaries.map(d => d.id === diary.id ? diary : d));
+      updatedDiaries = diaries.map(d => d.id === diary.id ? diary : d);
     } else {
-      setDiaries([diary, ...diaries]);
+      updatedDiaries = [diary, ...diaries];
     }
+    setDiaries(updatedDiaries);
+    await saveDiaries(updatedDiaries);
   };
+
+  console.log(diaries);
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">我的日记</h1>
-          {/* <Button onClick={handleCreateDiary} className="flex items-center gap-2">
-            <PlusCircle className="w-5 h-5" />
-            写日记
-          </Button> */}
         </div>
 
         {showForm ? (
@@ -64,13 +73,13 @@ export default function Home() {
 
         <div className='h-2'></div>
 
-        {diaries.length === 0 ? (
+        {diaries?.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
             <p className="text-gray-500">还没有日记，开始写第一篇吧！</p>
           </div>
         ) : (
           <div className="grid gap-4">
-            {diaries.map((diary) => (
+            {diaries?.map?.((diary) => (
               <div
                 key={diary.id}
                 className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
@@ -92,14 +101,13 @@ export default function Home() {
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
+                  <span className="text-sm text-gray-500">{diary.date}</span>
                 </div>
-                <p className="text-gray-600 mb-2 line-clamp-2">{diary.content}</p>
-                <time className="text-sm text-gray-400">{diary.date}</time>
+                <p className="whitespace-pre-wrap">{diary.content}</p>
               </div>
             ))}
           </div>
         )}
-
       </div>
     </main>
   );

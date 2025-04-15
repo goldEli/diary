@@ -13,6 +13,10 @@ export default function Home() {
 
   useEffect(() => {
     const fetchDiaries = async () => {
+      if (localStorage.getItem("auth") != "admin") {
+        window.location.href = "/login";
+        return 
+      }
       const loadedDiaries = await loadDiaries();
       setDiaries(loadedDiaries);
     };

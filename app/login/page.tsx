@@ -15,7 +15,7 @@ export default function LoginPage() {
     try {
       const result = await authenticate(formData);
       if (result.success) {
-        // localStorage.setItem("auth", result.credentialsHash);
+        localStorage.setItem("auth", username);
         window.location.href = "/";
       } else {
         setError(result.error ?? "");

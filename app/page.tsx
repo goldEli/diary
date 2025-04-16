@@ -10,6 +10,7 @@ import { loadDiaries, saveDiaries } from "@/lib/diary";
 import { Download } from "lucide-react";
 import { downloadCSV } from "@/app/actions/download";
 import { exportToCSV } from "@/lib/utils";
+import { DiaryList } from "@/components/DiaryList";
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
@@ -41,7 +42,7 @@ export default function Home() {
   };
 
   const handleDeleteDiary = async (id: string) => {
-    if (!window.confirm('确定要删除这篇日记吗？')) return;
+    if (!window.confirm("确定要删除这篇日记吗？")) return;
     const updatedDiaries = diaries.filter((diary) => diary.id !== id);
     setDiaries(updatedDiaries);
     await saveDiaries(updatedDiaries);
@@ -71,7 +72,7 @@ export default function Home() {
             onClick={async () => {
               const data = await downloadCSV();
               for (const item of data) {
-                exportToCSV(item.fileName, item.list as any[])
+                exportToCSV(item.fileName, item.list as any[]);
               }
             }}
           >
@@ -102,35 +103,11 @@ export default function Home() {
             <p className="text-gray-500">还没有日记，开始写第一篇吧！</p>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {diaries?.map?.((diary) => (
-              <div
-                key={diary.id}
-                className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditDiary(diary)}
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteDiary(diary.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <span className="text-sm text-gray-500">{diary.date}</span>
-                </div>
-                <p className="whitespace-pre-wrap">{diary.content}</p>
-              </div>
-            ))}
-          </div>
+          <DiaryList
+            diaries={diaries}
+            handleEditDiary={handleEditDiary}
+            handleDeleteDiary={handleDeleteDiary}
+          />
         )}
       </div>
     </main>

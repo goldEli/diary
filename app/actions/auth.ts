@@ -3,6 +3,7 @@
 import mysql from 'mysql2/promise';
 import { createHash } from "crypto";
 import { cookies } from 'next/headers';
+import { memoryStorage } from '@/lib/memory';
 
 export async function authenticate(formData: FormData) {
   try {
@@ -48,6 +49,17 @@ export async function authenticate(formData: FormData) {
         sameSite: 'strict',
         path: '/'
       });
+
+      cookieStore.set('username', username, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+      });
+
+      // 将token存入Redis，设置30天过期时间
+      console.log("set", username, credentialsHash)
+      memoryStorage.set(username, credentialsHash, 60 * 60 * 24 * 30);
       
       return { success: true };
     }

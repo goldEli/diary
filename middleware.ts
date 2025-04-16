@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// import { redisClient } from './lib/redis';
+import { memoryStorage } from './lib/memory';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // 获取当前路径
   const path = request.nextUrl.pathname;
 
@@ -22,8 +24,23 @@ export function middleware(request: NextRequest) {
     // 获取auth cookie
     const auth = request.cookies.get('auth');
 
-    // 如果没有auth cookie，重定向到登录页
+    // 如果没有auth cookie或cookie值不符合MD5格式（32位十六进制字符），重定向到登录页
     if (!auth?.value) {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // 从cookie中提取username
+    const username = request.cookies.get('username')?.value;
+    if (!username) {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // 从Redis中获取token
+    const redisToken = await memoryStorage.get(username);
+    console.log('redisToken', redisToken, username);
+    if (!redisToken || redisToken !== auth.value) {
       const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }

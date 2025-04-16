@@ -47,6 +47,33 @@ pnpm dev
 pnpm build
 ```
 
+### Docker部署
+
+1. 构建镜像
+```bash
+docker-compose build
+```
+
+2. 启动服务
+```bash
+docker-compose up -d
+```
+
+3. 查看服务状态
+```bash
+docker-compose ps
+```
+
+4. 查看日志
+```bash
+docker-compose logs -f
+```
+
+5. 停止服务
+```bash
+docker-compose down
+```
+
 ### 使用PM2部署
 
 1. 全局安装PM2

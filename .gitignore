@@ -41,6 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 # data files
-data/diaries_*.csv
-
-!data/.gitkeep
+data/

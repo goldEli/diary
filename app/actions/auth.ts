@@ -1,9 +1,7 @@
 "use server";
 
-import { CSVParser } from "@/lib/CSVParser";
+import mysql from 'mysql2/promise';
 import { createHash } from "crypto";
-import fs from "fs/promises";
-import path from "path";
 import { cookies } from 'next/headers';
 
 export async function authenticate(formData: FormData) {
@@ -15,18 +13,24 @@ export async function authenticate(formData: FormData) {
       return { success: false, error: "用户名和密码不能为空" };
     }
 
-    const csvPath = path.join(process.cwd(), "data", "admin.csv");
-    const csvContent = await fs.readFile(csvPath, "utf-8");
-    const rows = await CSVParser.parseAsync<{ username: string; password: string }>(
-      csvContent
+    // 创建数据库连接
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '123456',
+      database: 'diary'
+    });
+
+    // 查询用户
+    const [rows] = await connection.execute(
+      'SELECT * FROM user WHERE username = ? AND password = ?',
+      [username, password]
     );
 
-    const userFound = rows.some((row) => {
-      return row.username === username && row.password === password;
-    });
-    console.log("rows:",rows)
-    console.log("password:",password)
-    console.log("username:",username)
+    // 关闭连接
+    await connection.end();
+
+    const userFound = Array.isArray(rows) && rows.length > 0;
 
     if (userFound) {
       const md5Hash = createHash("md5");

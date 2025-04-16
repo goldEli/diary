@@ -27,6 +27,8 @@ export async function authenticate(formData: FormData) {
       [username, password]
     );
 
+    console.log(rows); // 输出查询结果，以检查是否正确获取了数据
+
     // 关闭连接
     await connection.end();
 

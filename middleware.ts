@@ -23,24 +23,10 @@ export async function middleware(request: NextRequest) {
   if (!isPublicPath) {
     // 获取auth cookie
     const auth = request.cookies.get('auth');
+    console.log("auth", auth?.value)
 
     // 如果没有auth cookie或cookie值不符合MD5格式（32位十六进制字符），重定向到登录页
     if (!auth?.value) {
-      const loginUrl = new URL('/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // 从cookie中提取username
-    const username = request.cookies.get('username')?.value;
-    if (!username) {
-      const loginUrl = new URL('/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // 从Redis中获取token
-    const redisToken = await memoryStorage.get(username);
-    console.log('redisToken', redisToken, username);
-    if (!redisToken || redisToken !== auth.value) {
       const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }

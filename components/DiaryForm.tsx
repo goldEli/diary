@@ -15,6 +15,20 @@ interface DiaryFormProps {
   onSave: (diary: DiaryEntry) => void;
 }
 
+/**
+ *  格式化日期 2025/01/01 18:00:00
+ * @param date 
+ */
+function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+}
+
 export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
   const [content, setContent] = useState(diary?.content || '');
 
@@ -23,7 +37,7 @@ export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
     const newDiary: DiaryEntry = {
       id: diary?.id || Date.now().toString(),
       content,
-      date: diary?.date || new Date().toLocaleDateString('zh-CN'),
+      date: diary?.date || formatDate(new Date()),
     };
     onSave(newDiary);
     onClose();

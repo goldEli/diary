@@ -8,13 +8,14 @@ import { DiaryForm } from "@/components/DiaryForm";
 import { DiaryEntry } from "@/types/diary";
 // import { loadDiaries, saveDiaries } from "@/lib/diary";
 import { Download } from "lucide-react";
-import { downloadCSV } from "@/app/actions/download";
+// import { downloadCSV } from "@/app/actions/download";
 import { exportToCSV } from "@/lib/utils";
 import { DiaryList } from "@/components/DiaryList";
 import { createDiary } from "./actions/createDiary";
 import { getDiaryList } from "./actions/getDiaryList";
 import { updateDiary } from "./actions/updateDiary";
 import { deleteDiary } from "./actions/deleteDiary";
+import { exportSQL } from "./actions/exportSQL";
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
@@ -74,9 +75,20 @@ export default function Home() {
             variant="outline"
             size="icon"
             onClick={async () => {
-              const data = await downloadCSV();
-              for (const item of data) {
-                exportToCSV(item.fileName, item.list as any[]);
+              try {
+                const sqlContent = await exportSQL();
+                const blob = new Blob([sqlContent], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `diary_export_${new Date().toISOString().split('T')[0]}.sql`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+              } catch (error) {
+                console.error('导出失败:', error);
+                alert('导出失败，请稍后重试');
               }
             }}
           >

@@ -1,4 +1,19 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: diary-app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=diary
+    depends_on:
+      - mysql
 
   mysql:
     image: mysql:8.0

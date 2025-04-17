@@ -6,25 +6,24 @@ import { PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { DiaryForm } from "@/components/DiaryForm";
 
 import { DiaryEntry } from "@/types/diary";
-import { loadDiaries, saveDiaries } from "@/lib/diary";
+// import { loadDiaries, saveDiaries } from "@/lib/diary";
 import { Download } from "lucide-react";
 import { downloadCSV } from "@/app/actions/download";
 import { exportToCSV } from "@/lib/utils";
 import { DiaryList } from "@/components/DiaryList";
+import { createDiary } from "./actions/createDiary";
+import { getDiaryList } from "./actions/getDiaryList";
+import { updateDiary } from "./actions/updateDiary";
+import { deleteDiary } from "./actions/deleteDiary";
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
 
+  const fetchDiaries = async () => {
+    const res = await getDiaryList();
+    setDiaries(res.data ?? []);
+  };
   useEffect(() => {
-    const fetchDiaries = async () => {
-      console.log("fetching diaries", localStorage.getItem("auth"));
-      if (localStorage.getItem("auth") != "admin") {
-        window.location.href = "/login";
-        return;
-      }
-      const loadedDiaries = await loadDiaries();
-      setDiaries(loadedDiaries);
-    };
     fetchDiaries();
   }, []);
 
@@ -37,7 +36,7 @@ export default function Home() {
   };
 
   const handleEditDiary = (diary: DiaryEntry) => {
-    setCurrentDiary(diary);
+    setCurrentDiary(diary ?? null);
     setShowForm(true);
   };
 
@@ -45,18 +44,23 @@ export default function Home() {
     if (!window.confirm("确定要删除这篇日记吗？")) return;
     const updatedDiaries = diaries.filter((diary) => diary.id !== id);
     setDiaries(updatedDiaries);
-    await saveDiaries(updatedDiaries);
+    await deleteDiary(id)
   };
 
-  const handleSaveDiary = async (diary: DiaryEntry) => {
-    let updatedDiaries: DiaryEntry[];
-    if (currentDiary) {
-      updatedDiaries = diaries.map((d) => (d.id === diary.id ? diary : d));
+  const handleSaveDiary = async (diary: Partial<DiaryEntry>) => {
+    if (diary.id != void 0) {
+      await updateDiary({
+        id: diary.id!,
+        content: diary.content ?? "",
+        date: diary.date ?? "",
+      });
     } else {
-      updatedDiaries = [diary, ...diaries];
+      await createDiary({
+        content: diary.content ?? "",
+        date: diary.date ?? "",
+      });
     }
-    setDiaries(updatedDiaries);
-    await saveDiaries(updatedDiaries);
+    fetchDiaries();
   };
 
   console.log(diaries);
@@ -82,7 +86,7 @@ export default function Home() {
 
         {showForm ? (
           <DiaryForm
-            diary={currentDiary}
+            diary={currentDiary ?? void 0}
             onClose={() => setShowForm(false)}
             onSave={handleSaveDiary}
           />

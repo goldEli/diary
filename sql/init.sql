@@ -1,4 +1,4 @@
--- Active: 1744807613263@@127.0.0.1@3306@diary
+-- Active: 1744812126392@@127.0.0.1@3306@diary
 -- 创建数据库
 CREATE DATABASE IF NOT EXISTS diary;
 USE diary;
@@ -13,3 +13,11 @@ CREATE TABLE IF NOT EXISTS user (
 
 -- 插入初始管理员用户
 INSERT INTO user (username, password) VALUES ('admin', '789456123');
+
+-- 创建日历表
+CREATE TABLE IF NOT EXISTS diary (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL,
+    date VARCHAR(20) NOT NULL,
+    INDEX idx_date (date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

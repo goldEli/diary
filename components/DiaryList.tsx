@@ -1,3 +1,4 @@
+"use client";
 import { DiaryEntry } from "@/types/diary";
 import { Button } from "./ui/button";
 import { Pencil, Trash2 } from "lucide-react";

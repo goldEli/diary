@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { updateDiary } from "@/app/actions/updateDiary";
 
 interface DiaryEntry {
   id: string;
@@ -10,35 +11,37 @@ interface DiaryEntry {
 }
 
 interface DiaryFormProps {
-  diary?: DiaryEntry | null;
+  diary?: DiaryEntry;
   onClose: () => void;
-  onSave: (diary: DiaryEntry) => void;
+  onSave: (diary: Partial<DiaryEntry>) => void;
 }
 
 /**
  *  格式化日期 2025/01/01 18:00:00
- * @param date 
+ * @param date
  */
 function formatDate(date: Date): string {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
 }
 
 export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
-  const [content, setContent] = useState(diary?.content || '');
+  const [content, setContent] = useState(diary?.content || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newDiary: DiaryEntry = {
-      id: diary?.id || Date.now().toString(),
+    const newDiary: Partial<DiaryEntry> = {
       content,
       date: diary?.date || formatDate(new Date()),
     };
+    if (diary?.id) {
+      newDiary.id = diary.id;
+    }
     onSave(newDiary);
     onClose();
   };
@@ -47,7 +50,10 @@ export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
     <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="content"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             写下你的故事
           </label>
           <textarea
@@ -64,9 +70,7 @@ export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
           <Button type="button" variant="outline" onClick={onClose}>
             取消
           </Button>
-          <Button type="submit">
-            保存
-          </Button>
+          <Button type="submit">保存</Button>
         </div>
       </form>
     </div>

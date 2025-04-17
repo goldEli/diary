@@ -1,8 +1,8 @@
 "use server";
 
-import { DiaryEntry } from '@/types/diary';
-import mysql from 'mysql2/promise';
 import { cookies } from 'next/headers';
+import { DiaryEntry } from '@/types/diary';
+import { createConnection } from '@/lib/mysql';
 
 export async function getDiaryList() {
   try {
@@ -13,12 +13,7 @@ export async function getDiaryList() {
       return { success: false, error: "未登录" };
     }
 
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '123456',
-      database: 'diary'
-    });
+    const connection = await createConnection();
 
     const [rows] = await connection.execute(
       'SELECT * FROM diary ORDER BY date DESC'

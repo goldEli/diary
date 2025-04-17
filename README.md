@@ -109,6 +109,10 @@ pnpm build
 
 ### Docker部署
 
+```
+docker-compose down --rmi all
+```
+
 1. 构建镜像
 ```bash
 docker-compose build

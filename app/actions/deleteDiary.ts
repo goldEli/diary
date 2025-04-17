@@ -14,7 +14,8 @@ export async function deleteDiary(id: string) {
     }
 
     const connection = await mysql.createConnection({
-      host: "127.0.0.1",
+      // host: "127.0.0.1",
+      host: "diary-mysql",
       user: "root",
       password: "123456",
       database: "diary",

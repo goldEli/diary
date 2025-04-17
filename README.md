@@ -41,6 +41,66 @@ pnpm dev
 
 ## 部署说明
 
+```bash
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+    "registry-mirrors": [
+    "https://docker.m.daocloud.io",
+    "https://docker.imgdb.de",
+    "https://docker-0.unsee.tech",
+    "https://docker.hlmirror.com",
+    "https://cjie.eu.org"
+    ]
+}
+EOF
+```
+
+### Linux服务器准备
+1. 安装必要依赖
+```bash
+sudo apt update
+sudo apt install -y nodejs pnpm docker docker-compose
+sudo apt install -y docker docker-compose
+```
+
+2. 克隆项目
+```bash
+git clone https://github.com/your-repo/diary.git
+cd diary
+```
+
+3. 安装项目依赖
+```bash
+pnpm install
+```
+
+### 维护与日志
+1. 查看应用日志
+```bash
+docker-compose logs -f
+# 或
+pm2 logs diary
+```
+
+2. 查看系统资源使用
+```bash
+docker stats
+# 或
+top
+```
+
+3. 备份数据
+```bash
+cp -r data/ data_backup_$(date +%Y%m%d)
+```
+
+4. 清理旧日志
+```bash
+pm2 flush
+# 或
+find /var/log/ -name "diary*" -mtime +30 -delete
+```
+
 ### 构建项目
 
 ```bash

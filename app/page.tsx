@@ -19,14 +19,17 @@ import { exportSQL } from "./actions/exportSQL";
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0); 
 
-  const fetchDiaries = async () => {
-    const res = await getDiaryList();
+  const fetchDiaries = async (page: number) => {
+    const res = await getDiaryList({page});
+    setTotal(res.total?? 0);
     setDiaries(res.data ?? []);
   };
   useEffect(() => {
-    fetchDiaries();
-  }, []);
+    fetchDiaries(page);
+  }, [page]);
 
   const [showForm, setShowForm] = useState(false);
   const [currentDiary, setCurrentDiary] = useState<DiaryEntry | null>(null);
@@ -61,7 +64,7 @@ export default function Home() {
         date: diary.date ?? "",
       });
     }
-    fetchDiaries();
+    fetchDiaries(page);
   };
 
   console.log(diaries);
@@ -123,6 +126,9 @@ export default function Home() {
             diaries={diaries}
             handleEditDiary={handleEditDiary}
             handleDeleteDiary={handleDeleteDiary}
+            page={page}
+            total={total}
+            onPageChange={setPage}
           />
         )}
       </div>

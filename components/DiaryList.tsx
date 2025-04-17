@@ -7,9 +7,12 @@ interface DiaryEntryProps {
   diaries: DiaryEntry[];
   handleEditDiary: (diary: DiaryEntry) => void;
   handleDeleteDiary: (id: string) => void;
+  page: number;
+  total: number;
+  onPageChange: (page: number) => void;
 }
 export function DiaryList(props: DiaryEntryProps) {
-  const { diaries, handleEditDiary, handleDeleteDiary } = props;
+  const { diaries, handleEditDiary, handleDeleteDiary, page, total, onPageChange } = props;
   return (
     <div className="grid gap-4">
       {diaries?.map?.((diary) => (
@@ -39,6 +42,25 @@ export function DiaryList(props: DiaryEntryProps) {
           <p className="whitespace-pre-wrap">{diary.content}</p>
         </div>
       ))}
+      <div className="flex justify-center gap-4 mt-4">
+        <Button
+          variant="outline"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+        >
+          上一页
+        </Button>
+        <span className="flex items-center">
+          第 {page} 页
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => onPageChange(page + 1)}
+          disabled={page * 10 >= total}
+        >
+          下一页
+        </Button>
+      </div>
     </div>
   );
 }

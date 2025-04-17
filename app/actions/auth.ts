@@ -16,7 +16,7 @@ export async function authenticate(formData: FormData) {
 
     // 创建数据库连接
     const connection = await mysql.createConnection({
-      host: 'localhost',
+      host: '127.0.0.1',
       user: 'root',
       password: '123456',
       database: 'diary'

@@ -6,12 +6,12 @@ import { cookies } from "next/headers";
 
 export async function deleteDiary(id: string) {
   try {
-    const cookieStore = await cookies();
-    const username = cookieStore.get("username");
+    // const cookieStore = await cookies();
+    // const username = cookieStore.get("username");
 
-    if (!username) {
-      return { success: false, error: "未登录" };
-    }
+    // if (!username) {
+    //   return { success: false, error: "未登录" };
+    // }
 
     const connection = await mysql.createConnection({
       // host: "127.0.0.1",

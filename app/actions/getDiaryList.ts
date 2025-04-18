@@ -7,12 +7,12 @@ import { createConnection } from "@/lib/mysql";
 export async function getDiaryList(params: { page: number; pageSize?: number }) {
   const { page = 1, pageSize = 10 } = params;
   try {
-    const cookieStore = await cookies();
-    const username = cookieStore.get("username");
+    // const cookieStore = await cookies();
+    // const username = cookieStore.get("username");
 
-    if (!username) {
-      return { success: false, error: "未登录" };
-    }
+    // if (!username) {
+    //   return { success: false, error: "未登录" };
+    // }
 
     const connection = await createConnection();
     const offset = (page - 1) * pageSize;

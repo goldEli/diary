@@ -8,12 +8,12 @@ import { cookies } from 'next/headers';
 
 export async function createDiary(diary: Omit<DiaryEntry, "id">) {
   try {
-    const cookieStore = await cookies();
-    const username = cookieStore.get('username');
+    // const cookieStore = await cookies();
+    // const username = cookieStore.get('username');
 
-    if (!username) {
-      return { success: false, error: "未登录" };
-    }
+    // if (!username) {
+    //   return { success: false, error: "未登录" };
+    // }
 
     const connection = await createConnection();
 

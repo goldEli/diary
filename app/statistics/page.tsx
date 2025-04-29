@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { getDiaryStatistics, DiaryStatistics } from '../actions/getDiaryStatistics';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import {
+  getDiaryStatistics,
+  DiaryStatistics,
+} from "../actions/getDiaryStatistics";
 import {
   BarChart,
   Bar,
@@ -14,7 +17,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 export default function StatisticsPage() {
   const [statistics, setStatistics] = useState<DiaryStatistics | null>(null);
@@ -26,7 +29,7 @@ export default function StatisticsPage() {
       if (result.success && result.data) {
         setStatistics(result.data);
       } else {
-        setError(result.error || '获取数据失败');
+        setError(result.error || "获取数据失败");
       }
     };
 
@@ -51,8 +54,23 @@ export default function StatisticsPage() {
         </Link>
         <h1 className="text-2xl font-bold">日记统计</h1>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {statistics.randomDiary && (
+          <Card>
+            <CardHeader className="text-lg font-semibold">
+              随机一则日记
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="text-sm text-gray-500">
+                {statistics.randomDiary.date}
+              </div>
+              <div className="text-sm line-clamp-4">
+                {statistics.randomDiary.content}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardHeader className="text-lg font-semibold">总日记数</CardHeader>
           <CardContent className="text-3xl font-bold text-primary">
@@ -66,16 +84,6 @@ export default function StatisticsPage() {
             {statistics.avgContentLength}
           </CardContent>
         </Card>
-
-        {statistics.randomDiary && (
-          <Card>
-            <CardHeader className="text-lg font-semibold">随机一则日记</CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-sm text-gray-500">{statistics.randomDiary.date}</div>
-              <div className="text-sm line-clamp-4">{statistics.randomDiary.content}</div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       <Card className="mt-6">

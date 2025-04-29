@@ -1,6 +1,7 @@
 "use server";
 
 import { createConnection } from '@/lib/mysql';
+import { getRandomDiary, RandomDiary } from './getRandomDiary';
 
 export type DiaryStatistics = {
   totalCount: number;
@@ -9,11 +10,7 @@ export type DiaryStatistics = {
     count: number;
   }>;
   avgContentLength: number;
-  randomDiary?: {
-    id: string;
-    content: string;
-    date: string;
-  };
+  randomDiary?: RandomDiary;
 };
 
 export async function getDiaryStatistics(): Promise<{
@@ -47,13 +44,10 @@ export async function getDiaryStatistics(): Promise<{
     ) as any;
     const avgContentLength = Math.round(avgLengthResult[0].avgLength || 0);
 
-    // 获取随机一篇日记
-    const [randomDiaryResult] = await connection.execute(
-      'SELECT id, content, DATE_FORMAT(date, "%Y-%m-%d") as date FROM diary ORDER BY RAND() LIMIT 1'
-    ) as any;
-    const randomDiary = randomDiaryResult[0];
-
     await connection.end();
+
+    // 获取随机一篇日记
+    const randomDiaryResult = await getRandomDiary();
 
     return {
       success: true,
@@ -61,7 +55,7 @@ export async function getDiaryStatistics(): Promise<{
         totalCount,
         monthlyStats,
         avgContentLength,
-        randomDiary,
+        randomDiary: randomDiaryResult.data,
       },
     };
   } catch (error) {

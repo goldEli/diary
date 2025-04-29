@@ -4,6 +4,7 @@ import mysql from 'mysql2/promise';
 import { createHash } from "crypto";
 import { cookies } from 'next/headers';
 import { memoryStorage } from '@/lib/memory';
+import { createConnection } from '@/lib/mysql';
 
 export async function authenticate(formData: FormData) {
   try {
@@ -14,14 +15,8 @@ export async function authenticate(formData: FormData) {
       return { success: false, error: "用户名和密码不能为空" };
     }
 
-    // 创建数据库连接
-    const connection = await mysql.createConnection({
-      // host: '127.0.0.1',
-      host: 'diary-mysql',
-      user: 'root',
-      password: '123456',
-      database: 'diary'
-    });
+
+    const connection = await createConnection();
 
     // 查询用户
     const [rows] = await connection.execute(

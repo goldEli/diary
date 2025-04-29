@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, ChartPie } from "lucide-react";
 import { DiaryForm } from "@/components/DiaryForm";
 
 import { DiaryEntry } from "@/types/diary";
@@ -20,11 +20,11 @@ import { exportSQL } from "./actions/exportSQL";
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0); 
+  const [total, setTotal] = useState(0);
 
   const fetchDiaries = async (page: number) => {
-    const res = await getDiaryList({page});
-    setTotal(res.total?? 0);
+    const res = await getDiaryList({ page });
+    setTotal(res.total ?? 0);
     setDiaries(res.data ?? []);
   };
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Home() {
     if (!window.confirm("确定要删除这篇日记吗？")) return;
     const updatedDiaries = diaries.filter((diary) => diary.id !== id);
     setDiaries(updatedDiaries);
-    await deleteDiary(id)
+    await deleteDiary(id);
   };
 
   const handleSaveDiary = async (diary: Partial<DiaryEntry>) => {
@@ -74,29 +74,41 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">我的日记</h1>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={async () => {
-              try {
-                const sqlContent = await exportSQL();
-                const blob = new Blob([sqlContent], { type: 'text/plain' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `diary_export_${new Date().toISOString().split('T')[0]}.sql`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-              } catch (error) {
-                console.error('导出失败:', error);
-                alert('导出失败，请稍后重试');
-              }
-            }}
-          >
-            <Download className="w-4 h-4" />
-          </Button>
+          <div className="flex gap-1">
+            <Button variant={"outline"} size={"icon"} onClick={e => {
+              // go to statistics page
+              window.location.href = "/statistics";
+            }}>
+              {/* 统计 */}
+              <ChartPie className="w-4 h-4" />
+              
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={async () => {
+                try {
+                  const sqlContent = await exportSQL();
+                  const blob = new Blob([sqlContent], { type: "text/plain" });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `diary_export_${
+                    new Date().toISOString().split("T")[0]
+                  }.sql`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+                } catch (error) {
+                  console.error("导出失败:", error);
+                  alert("导出失败，请稍后重试");
+                }
+              }}
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {showForm ? (

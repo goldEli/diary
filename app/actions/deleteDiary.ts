@@ -1,5 +1,6 @@
 "use server";
 
+import { createConnection } from "@/lib/mysql";
 import { DiaryEntry } from "@/types/diary";
 import mysql from "mysql2/promise";
 import { cookies } from "next/headers";
@@ -13,13 +14,7 @@ export async function deleteDiary(id: string) {
     //   return { success: false, error: "未登录" };
     // }
 
-    const connection = await mysql.createConnection({
-      // host: "127.0.0.1",
-      host: "diary-mysql",
-      user: "root",
-      password: "123456",
-      database: "diary",
-    });
+    const connection = await createConnection();
 
     const [result] = await connection.execute(
       "DELETE FROM diary WHERE id = ?",

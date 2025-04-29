@@ -109,9 +109,7 @@ pnpm build
 
 ### Docker部署
 
-```
-docker-compose down --rmi all
-```
+#### 首次部署
 
 1. 构建镜像
 ```bash
@@ -136,6 +134,37 @@ docker-compose logs -f
 5. 停止服务
 ```bash
 docker-compose down
+```
+
+#### 代码更新后重新部署
+
+1. 停止并移除现有容器
+```bash
+docker-compose down
+```
+
+2. 拉取最新代码
+```bash
+git pull
+```
+
+3. 重新构建镜像
+```bash
+docker-compose build --no-cache
+```
+
+4. 启动新服务
+```bash
+docker-compose up -d
+```
+
+5. 验证部署
+```bash
+# 查看容器状态
+docker-compose ps
+
+# 查看应用日志
+docker-compose logs -f
 ```
 
 ### 使用PM2部署

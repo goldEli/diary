@@ -2,6 +2,7 @@
 
 import { createConnection } from '@/lib/mysql';
 import { getRandomDiary, RandomDiary } from './getRandomDiary';
+import { getHistoryDiary } from './getHistoryDiary';
 
 export type DiaryStatistics = {
   totalCount: number;
@@ -11,6 +12,7 @@ export type DiaryStatistics = {
   }>;
   avgContentLength: number;
   randomDiary?: RandomDiary;
+  historyDiary?: RandomDiary;
 };
 
 export async function getDiaryStatistics(): Promise<{
@@ -48,6 +50,8 @@ export async function getDiaryStatistics(): Promise<{
 
     // 获取随机一篇日记
     const randomDiaryResult = await getRandomDiary();
+    // 获取历史上的今天的日记
+    const historyDiaryResult = await getHistoryDiary();
 
     return {
       success: true,
@@ -56,6 +60,7 @@ export async function getDiaryStatistics(): Promise<{
         monthlyStats,
         avgContentLength,
         randomDiary: randomDiaryResult.data,
+        historyDiary: historyDiaryResult.data,
       },
     };
   } catch (error) {

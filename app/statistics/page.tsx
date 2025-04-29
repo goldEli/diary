@@ -56,6 +56,21 @@ export default function StatisticsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {statistics.historyDiary && (
+          <Card>
+            <CardHeader className="text-lg font-semibold">
+              历史上的今天
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="text-sm text-gray-500">
+                {statistics.historyDiary.date}
+              </div>
+              <div className="text-sm line-clamp-4">
+                {statistics.historyDiary.content}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {statistics.randomDiary && (
           <Card>
             <CardHeader className="text-lg font-semibold">

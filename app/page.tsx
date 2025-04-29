@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Pencil, Trash2, ChartPie } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, ChartPie, Search } from "lucide-react";
 import { DiaryForm } from "@/components/DiaryForm";
 
 import { DiaryEntry } from "@/types/diary";
@@ -75,6 +75,15 @@ export default function Home() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">我的日记</h1>
           <div className="flex gap-1">
+            {/* search */}
+            <Button variant={"outline"} size={"icon"} onClick={e => {
+              // go to statistics page
+              window.location.href = "/search";
+            }}>
+              <Search className="w-4 h-4" />
+              
+            </Button>
+
             <Button variant={"outline"} size={"icon"} onClick={e => {
               // go to statistics page
               window.location.href = "/statistics";

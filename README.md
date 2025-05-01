@@ -206,3 +206,15 @@ pm2 restart diary
 ## 许可证
 
 MIT
+
+## 常见问题
+
+#### 恢复数据
+执行备份 sql 需要设置字符集
+
+```bash
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+-- 您的SQL语句...
+SET FOREIGN_KEY_CHECKS = 1;
+```

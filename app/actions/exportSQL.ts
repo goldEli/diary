@@ -9,13 +9,20 @@ export async function exportSQL() {
     const [rows] = await connection.query('SELECT * FROM diary');
     
     // 生成INSERT语句
-    let sqlContent = '';
+    let sqlContent = `
+    SET NAMES utf8mb4;
+    SET FOREIGN_KEY_CHECKS = 0;
+    `;
     for (const row of rows as any[]) {
       const { id, content, date } = row;
       const escapedContent = content.replace(/'/g, "''"); // 转义单引号
       sqlContent += `INSERT INTO diary (id, content, date) VALUES ('${id}', '${escapedContent}', '${date}');
 `;
     }
+    // end
+    sqlContent += `
+    SET FOREIGN_KEY_CHECKS = 1;
+    `;
 
     return sqlContent;
   } catch (error) {

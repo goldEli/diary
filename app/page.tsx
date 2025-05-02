@@ -2,20 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Pencil, Trash2, ChartPie, Search } from "lucide-react";
+import { PlusCircle, Download, ChartPie, Search, SheetIcon } from "lucide-react";
 import { DiaryForm } from "@/components/DiaryForm";
 
 import { DiaryEntry } from "@/types/diary";
-// import { loadDiaries, saveDiaries } from "@/lib/diary";
-import { Download } from "lucide-react";
-// import { downloadCSV } from "@/app/actions/download";
-import { exportToCSV } from "@/lib/utils";
 import { DiaryList } from "@/components/DiaryList";
 import { createDiary } from "./actions/createDiary";
 import { getDiaryList } from "./actions/getDiaryList";
 import { updateDiary } from "./actions/updateDiary";
 import { deleteDiary } from "./actions/deleteDiary";
 import { exportSQL } from "./actions/exportSQL";
+import { exportCSV } from "./actions/exportCSV";
 
 export default function Home() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
@@ -116,6 +113,29 @@ export default function Home() {
               }}
             >
               <Download className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={async () => {
+                try {
+                  const csvContent = await exportCSV();
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `diary_export_${new Date().toISOString().split("T")[0]}.csv`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+                } catch (error) {
+                  console.error("导出失败:", error);
+                  alert("导出失败，请稍后重试");
+                }
+              }}
+            >
+              <SheetIcon className="w-4 h-4" />
             </Button>
           </div>
         </div>

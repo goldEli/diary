@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { DiaryEntry } from "@/types/diary";
-import { DiaryList } from "@/components/DiaryList";
+// import { DiaryList } from "@/app/diary/DiaryList";
 import { searchDiaries } from "../actions/searchDiaries";
 import { DatePicker } from "@/components/DatePicker";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function SearchPage() {
   const [keyword, setKeyword] = useState("");
   // 3个月前
-  const [startDate, setStartDate] = useState(dayjs().subtract(30, "day").format("YYYY-MM-DD"));
+  const [startDate, setStartDate] = useState(
+    dayjs().subtract(30, "day").format("YYYY-MM-DD")
+  );
   const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [total, setTotal] = useState(0);
@@ -101,18 +104,47 @@ export default function SearchPage() {
       </div>
 
       {diaries.length > 0 ? (
-        <DiaryList
-          diaries={diaries}
-          handleDeleteDiary={() => {}}
-          handleEditDiary={() => {}}
-          total={total}
-          page={page}
-          onPageChange={(newPage) => {
-            setPage(newPage);
-            handleSearch();
-          }}
-        />
+        <div className="grid gap-4">
+          {diaries?.map?.((diary) => (
+            <div
+              key={diary.id}
+              className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-2">
+                {/* <Actions id={diary.id} /> */}
+                <span className="text-sm text-gray-500">{diary.date}</span>
+              </div>
+              <p className="whitespace-pre-wrap">{diary.content}</p>
+            </div>
+          ))}
+          <div className="flex justify-center gap-4 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setPage(page - 1)}
+              disabled={page <= 1}
+            >
+              上一页
+            </Button>
+            <span className="flex items-center">第 {page} 页</span>
+            <Button
+              variant="outline"
+              onClick={() => setPage(page + 1)}
+              disabled={page * 10 >= total}
+            >
+              下一页
+            </Button>
+          </div>
+        </div>
       ) : (
+        // <DiaryList
+        //   diaries={diaries}
+        //   total={total}
+        //   page={page}
+        //   onPageChange={(newPage) => {
+        //     setPage(newPage);
+        //     handleSearch();
+        //   }}
+        // />
         <div className="text-center text-gray-500 mt-8">
           {loading ? "加载中..." : "暂无搜索结果"}
         </div>

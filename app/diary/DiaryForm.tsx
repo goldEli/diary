@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { updateDiary } from "@/app/actions/updateDiary";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getDiaryDetail } from "@/app/actions/getDiaryList";
+import { updateDiary } from "../actions/updateDiary";
+import { createDiary } from "../actions/createDiary";
 
 interface DiaryEntry {
   id: string;
@@ -11,9 +14,9 @@ interface DiaryEntry {
 }
 
 interface DiaryFormProps {
-  diary?: DiaryEntry;
-  onClose: () => void;
-  onSave: (diary: Partial<DiaryEntry>) => void;
+  // diary?: DiaryEntry;
+  // onClose?: () => void;
+  // onSave?: (diary: Partial<DiaryEntry>) => void;
 }
 
 /**
@@ -30,20 +33,50 @@ function formatDate(date: Date): string {
   return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
-  const [content, setContent] = useState(diary?.content || "");
+export function DiaryForm() {
+  const [diary, setDiary] = useState<DiaryEntry | null>(null);
+  const [content, setContent] = useState("");
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page") ?? "1");
+  const id = searchParams.get("id");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (id) {
+      getDiaryDetail({ id }).then((res) => {
+        setDiary(res.data);
+        setContent(res.data.content);
+      });
+    }
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    debugger
     e.preventDefault();
     const newDiary: Partial<DiaryEntry> = {
       content,
-      date: diary?.date || formatDate(new Date()),
+      date: diary?.date ?? formatDate(new Date()),
     };
     if (diary?.id) {
       newDiary.id = diary.id;
     }
-    onSave(newDiary);
-    onClose();
+    // onSave?.(newDiary);
+    if (diary?.id != void 0) {
+      console.log("updateDiary", newDiary.id, newDiary.content, newDiary.date);
+      await updateDiary({
+        id: newDiary.id!,
+        content: newDiary.content ?? "",
+        date: newDiary?.date ?? "",
+      });
+    } else {
+      console.log("createDiary", newDiary?.content, newDiary?.date);
+      await createDiary({
+        content: newDiary?.content ?? "",
+        date: newDiary?.date ?? "",
+      });
+    }
+    // onClose?.();
+    router.push(`/diary?page=${page}&create=false`);
   };
 
   return (
@@ -67,7 +100,13 @@ export function DiaryForm({ diary, onClose, onSave }: DiaryFormProps) {
           />
         </div>
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              router.push(`/diary?page=${page}&create=false`);
+            }}
+          >
             取消
           </Button>
           <Button type="submit">保存</Button>

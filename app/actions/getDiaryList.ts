@@ -45,3 +45,31 @@ export async function getDiaryList(params: { page: number; pageSize?: number }) 
     };
   }
 }
+
+
+/**
+ * 获取日记详情
+ * @param params
+ * @returns
+ */
+export async function getDiaryDetail(params: { id: string }) {
+  const { id } = params;
+  try {
+    const connection = await createConnection();
+    const [rows] = await connection.query(
+      "SELECT * FROM diary WHERE id = ?",
+      [id]
+    ) as any;
+    await connection.end();
+    return {
+      success: true,
+      data: rows[0],
+    };
+  } catch (error) {
+    console.error("Get diary detail error:", error);
+    return {
+      success: false,
+      error: "获取日记详情失败，请稍后重试",
+    };
+  }
+}

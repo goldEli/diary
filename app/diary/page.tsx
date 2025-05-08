@@ -1,7 +1,6 @@
-"use client";
 import Content from "./Content";
 
-export default async function Diary() {
+export default function Diary() {
   
   return <Content />
 }

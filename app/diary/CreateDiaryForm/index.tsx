@@ -3,7 +3,7 @@ import { DiaryForm } from "../DiaryForm";
 import { DiaryContext } from "../Content";
 import { useContext } from "react";
 
-export async function CreateDiaryForm() {
+export function CreateDiaryForm() {
   const { setCreate, create } = useContext(DiaryContext);
 
   const showForm = create 

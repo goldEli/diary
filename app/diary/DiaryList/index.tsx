@@ -1,3 +1,4 @@
+"use client";
 import { DiaryEntry } from "@/types/diary";
 import { Paging } from "./Paging";
 import { Actions } from "./Actions";
@@ -23,7 +24,7 @@ export function DiaryList(props: DiaryEntryProps) {
           <p className="whitespace-pre-wrap">{diary.content}</p>
         </div>
       ))}
-      <Paging page={page} total={total} />
+      <Paging />
     </div>
   );
 }

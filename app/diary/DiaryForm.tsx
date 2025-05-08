@@ -1,22 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
 import { getDiaryDetail } from "@/app/actions/getDiaryList";
-import { updateDiary } from "../actions/updateDiary";
-import { createDiary } from "../actions/createDiary";
+import { DiaryContext } from "./Content";
 
 interface DiaryEntry {
   id: string;
   content: string;
   date: string;
-}
-
-interface DiaryFormProps {
-  // diary?: DiaryEntry;
-  // onClose?: () => void;
-  // onSave?: (diary: Partial<DiaryEntry>) => void;
 }
 
 /**
@@ -34,24 +26,20 @@ function formatDate(date: Date): string {
 }
 
 export function DiaryForm() {
+  const { editId, onEdit, setCreate } = useContext(DiaryContext);
   const [diary, setDiary] = useState<DiaryEntry | null>(null);
   const [content, setContent] = useState("");
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get("page") ?? "1");
-  const id = searchParams.get("id");
-  const router = useRouter();
 
   useEffect(() => {
-    if (id) {
-      getDiaryDetail({ id }).then((res) => {
+    if (editId) {
+      getDiaryDetail({ id: editId }).then((res) => {
         setDiary(res.data);
         setContent(res.data.content);
       });
     }
-  }, [id]);
+  }, [editId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    debugger
     e.preventDefault();
     const newDiary: Partial<DiaryEntry> = {
       content,
@@ -60,21 +48,11 @@ export function DiaryForm() {
     if (diary?.id) {
       newDiary.id = diary.id;
     }
-    // onSave?.(newDiary);
-    if (diary?.id != void 0) {
-      await updateDiary({
-        id: newDiary.id!,
-        content: newDiary.content ?? "",
-        date: newDiary?.date ?? "",
-      });
-    } else {
-      await createDiary({
-        content: newDiary?.content ?? "",
-        date: newDiary?.date ?? "",
-      });
-    }
-    // onClose?.();
-    router.push(`/diary?page=${page}&create=false`);
+    onEdit({
+      id: newDiary.id,
+      content: newDiary.content ?? "",
+      date: newDiary.date ?? "",
+    });
   };
 
   return (
@@ -102,7 +80,7 @@ export function DiaryForm() {
             type="button"
             variant="outline"
             onClick={() => {
-              router.push(`/diary?page=${page}&create=false`);
+              setCreate(false);
             }}
           >
             取消

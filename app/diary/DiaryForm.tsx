@@ -62,14 +62,12 @@ export function DiaryForm() {
     }
     // onSave?.(newDiary);
     if (diary?.id != void 0) {
-      console.log("updateDiary", newDiary.id, newDiary.content, newDiary.date);
       await updateDiary({
         id: newDiary.id!,
         content: newDiary.content ?? "",
         date: newDiary?.date ?? "",
       });
     } else {
-      console.log("createDiary", newDiary?.content, newDiary?.date);
       await createDiary({
         content: newDiary?.content ?? "",
         date: newDiary?.date ?? "",

@@ -20,10 +20,8 @@ export const loadDiaries = async (): Promise<DiaryEntry[]> => {
     if (!content.trim()) {
       return [];
     }
-    console.log(content);
     // 同步解析
     const records = CSVParser.parseSync<DiaryEntry>(content);
-    console.log(records, typeof records);
     return records;
     // return records.map((record: any) => ({
     //   id: record.id,

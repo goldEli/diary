@@ -51,7 +51,6 @@ export async function searchDiaries(params: SearchParams) {
       [...params, pageSize, offset]
     );
 
-    console.log("baseQuery",baseQuery, params, rows);
 
     // 查询总数
     const [totalResult] = (await connection.query(

@@ -41,7 +41,6 @@ export async function getHistoryDiary(): Promise<{
 
     await connection.end();
 
-    console.log(historyDiaryResult,month,day ,"historyDiaryResult"); // Add this line to log the result t
 
     return {
       success: true,
